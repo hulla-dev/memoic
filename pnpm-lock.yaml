@@ -11,8 +11,8 @@ importers:
       typescript: 4.9.3
     dependencies:
       '@changesets/cli': 2.25.2
-    devDependencies:
       eslint-config-memoic: link:packages/eslint-config-memoic
+    devDependencies:
       prettier: 2.8.0
       turbo: 1.6.3
       typescript: 4.9.3
