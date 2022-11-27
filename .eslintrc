@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "extends": ["memoic"],
+  "settings": {
+    "memoic": {
+      "rootDir": ["packages/memoic"]
+    },
+    "native": {
+      "rootDir": ["packages/native"]
+    }
+  }
+}
