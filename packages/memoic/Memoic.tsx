@@ -8,8 +8,11 @@ const client = new QueryClient({ defaultOptions: { queries: { staleTime: seconds
 
 function prefetchQueries<Prefetch extends Queries>(queryMap: QueryMap<Prefetch>) {
   return Promise.all(
-    entries(queryMap).map(async ([key, { queryFn, deps }]) =>
-      client.prefetchQuery({ queryKey: [key, ...(deps || [])], queryFn }),
+    entries(queryMap).map(async ([key, { queryFn, initialParams }]) =>
+      client.prefetchQuery({
+        queryKey: [key, ...(initialParams || [])],
+        queryFn: () => queryFn(initialParams),
+      }),
     ),
   )
 }
@@ -28,8 +31,8 @@ export function Memoic<MemoicQueries extends Queries>({
         (result, [key, builder]) => (builder.options ? result : { ...result, [key]: builder }),
         {} as QueryMap,
       )
-      entries(queriesWithOptions).forEach(([key, { deps, options }]) => {
-        client.setQueryDefaults([key, deps], options as UseQueryOptions)
+      entries(queriesWithOptions).forEach(([key, { initialParams, options }]) => {
+        client.setQueryDefaults([key, initialParams], options as UseQueryOptions)
       })
       // 2. Prefetch initial queries
       const prefetchableQueries = entries(queries).reduce(

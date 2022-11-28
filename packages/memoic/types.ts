@@ -1,19 +1,19 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
-export type QueryDependency = [string, ...unknown[]]
+export type QueryDependency<Fn extends AsyncFn = AsyncFn> = Parameters<Fn>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AsyncFn = (...args: any[]) => Promise<any>
 
-export type Query = {
-  queryFn: AsyncFn
-  deps: QueryDependency
+export type Query<Fn extends AsyncFn = AsyncFn> = {
+  queryFn: Fn
+  initialParams?: QueryDependency<Fn>
   options?: UseQueryOptions
 }
 
-export type Queries = {
-  [key: string]: Query
+export type Queries<Fn extends AsyncFn = AsyncFn> = {
+  [key: string]: Query<Fn>
 }
 
 export type QueryMap<Prefetch extends Queries = Queries> = {
