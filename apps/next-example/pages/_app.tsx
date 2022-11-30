@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { Memoic } from 'memoic'
+import { Memoic } from '@memoic/core'
 import { queries } from '../memoic'
 
 export default function App({ Component, pageProps }: AppProps) {
