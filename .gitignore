@@ -2,6 +2,7 @@
 
 # package exports
 dist/
+.changeset/*.md
 
 # dependencies
 node_modules
