@@ -1,0 +1,34 @@
+{
+  "name": "@memoic/core",
+  "version": "0.2.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "tsup": {
+    "entry": "./index.ts",
+    "splititng": true,
+    "sourceMap": true,
+    "clean": true,
+    "minify": true
+  },
+  "scripts": {
+    "build": "tsup ./index.ts --format cjs --dts-resolve"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^4.18.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^4.18.0",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "eslint": "^8.28.0",
+    "eslint-config-memoic": "workspace:*",
+    "react": "^18.2.0",
+    "tsconfig": "workspace:*",
+    "tsup": "^6.5.0",
+    "typescript": "4.9.3"
+  }
+}
