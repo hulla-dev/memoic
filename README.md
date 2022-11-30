@@ -50,9 +50,11 @@ Comes pre-packaged with **optional** extensions. They do not muddy the internal 
 - and more
 
 ## Installation :bricks:
-Follow the instructions depending on your use-case. *The main part of Memoic is `@memoic/core` and is required for the other extensions to work
+Follow the instructions depending on your use-case.
 
 - [`@memoic/core`](https://github.com/samuelhulla/memoic/packages/core) - The core of Memoic. Required for other extensions to work
 - [`@memoic/native`](https://github.com/samuelhulla/memoic/packages/native) - React native adapter
 - [`@memoic/firebase`](https://github.com/samuelhulla/memoic/packages/firebase) - Firebase adapter
 
+## Credits  ❤️
+This package would not be possible without the awesome work of [`@tanstack/query`](https://github.com/TanStack/query). As a matter of fact, if you are already using `@tanstack/react-query`, you can directly use the exported functions and they will work in unison with memoic! 😉
