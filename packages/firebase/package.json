@@ -1,0 +1,49 @@
+{
+  "name": "@memoic/firebase",
+  "author": "samuelhulla",
+  "scripts": {
+    "build": "tsup ./index.ts --format cjs --dts-resolve"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "tsup": {
+    "entry": "./index.ts",
+    "splitting": true,
+    "clean": true,
+    "minify": true
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "eslint-config-memoic": "workspace:*",
+    "@react-native-firebase/firestore": "^16.4.6",
+    "@tanstack/react-query": "^4.18.0",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "firebase": "9.14.0",
+    "react": "^18.2.0",
+    "tsup": "^6.5.0"
+  },
+  "dependencies": {
+    "@memoic/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@react-native-firebase/firestore": "^16.4.6",
+    "@tanstack/react-query": "^4.18.0",
+    "firebase": "^8.0.2",
+    "react": "^18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-firebase/firestore": {
+      "optional": true
+    },
+    "@tanstack/react-query": {
+      "optional": true
+    },
+    "firebase": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
+  }
+}
