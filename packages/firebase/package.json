@@ -1,6 +1,7 @@
 {
   "name": "@memoic/firebase",
   "author": "samuelhulla",
+  "version": "0.1.0",
   "scripts": {
     "build": "tsup ./index.ts --format cjs --dts-resolve"
   },
