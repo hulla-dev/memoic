@@ -1,0 +1,4 @@
+{
+  "extends": ["memoic"],
+  "root": true
+}
