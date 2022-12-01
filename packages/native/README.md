@@ -59,9 +59,9 @@ import { get } from 'memoic'
 
 export default function Profile({ id ): { id: string }) {
   const { data, refetch } = get('user', [id])
-  useOnFocus(refetch, useFocusEffect) / enables refetching on focus ✅
+  useOnFocus(refetch, useFocusEffect) // enables refetching on focus 🔎
   // Note, you don't have to specifically use @react-navigation.
-  // Can be any focus listener, or you can even create your own, it just needs to accepts a callback as first argument  ℹ️
+  // Can be any focus listener, or you can even create your own, it just needs to accepts a callback as first argument ℹ️
 }
 ```
 
