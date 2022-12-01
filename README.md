@@ -7,7 +7,7 @@ For the longest time ever fetching has been a headache and it felt like **a comp
  - having super **complex fetching setup**, that is **awesome for users**, but makes your new dev **hires quit their job after 2 months**
  - a **barebones fetching logic** that is easy to work with, but loading screens are inseparable part of your application
  
-This is where **Memoic** comes in! A package, that delivers both an awesome UX with pre-fetching, fetching and caching, ready with integrations for major framework/DB setups like [`Firebase`](https://github.com/samuelhulla/memoic/packages/firebase), Supabase, MongoDB, etc. 
+This is where **Memoic** comes in! A package, that delivers both an awesome UX with pre-fetching, fetching and caching, ready with integrations for major framework/DB setups like [`Firebase`](packages/firebase), Supabase, MongoDB, etc. 
 
 ## Features :gem:
 
@@ -44,8 +44,8 @@ function Usercart() {
 ### Extensible
 Comes pre-packaged with **optional** extensions. They do not muddy the internal core itself, but are extensible part of memoic that you can opt into. Memoic so far supports the following plugins/extensions
 
-- [`React Native`](https://github.com/samuelhulla/memoic/packages/native)
-- [`Firebase`](https://github.com/samuelhulla/memoic/)
+- [`React Native`](packages/native)
+- [`Firebase`](packages/firebase)
 - `Supabase` - in progress
 - ...
 
@@ -55,9 +55,9 @@ This is only tip of the iceberg and we can include only so much into a single gi
 ## Installation :bricks:
 Follow the instructions depending on your use-case.
 
-- [`@memoic/core`](https://github.com/samuelhulla/memoic/packages/core) - The core of Memoic. Required for other extensions to work
-- [`@memoic/native`](https://github.com/samuelhulla/memoic/packages/native) - React native adapter
-- [`@memoic/firebase`](https://github.com/samuelhulla/memoic/packages/firebase) - Firebase adapter
+- [`@memoic/core`](packages/core) - The core of Memoic. Required for other extensions to work
+- [`@memoic/native`](packages/native) - React native adapter
+- [`@memoic/firebase`](packages/firebase) - Firebase adapter
 
 ## Credits  ❤️
 This package would not be possible without the awesome work of [`@tanstack/query`](https://github.com/TanStack/query). As a matter of fact, if you are already using `@tanstack/react-query`, you can directly use the exported functions and they will work in unison with memoic! 😉
