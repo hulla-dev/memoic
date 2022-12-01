@@ -43,7 +43,6 @@ const getUserById = async (id: string) => fetch(`yourAPI/user/${id}`).then(res =
 
 export const queries = {
   user: query(getUserById)
-  memoic: query(async () => 'awesome')
 }
 
 export const { get, prefetch } = createMemoic(queries) // this prepares the fetching, cache and type-safety for us ✅
