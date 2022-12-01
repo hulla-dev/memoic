@@ -86,5 +86,7 @@ function User({ id }: { id: string}) {
 ```
 
 And voilá, you're good to go. Everything is taken care of for you out of the box. Even if your user switched to different tab and then came back, he will actually get served straight away with the cached data, no loading screen and  in the meantime we'll perform a recalidation on background.
-For more advanced concepts, refer to the [wiki](wiki)
+
+> **Info**
+> For more advanced concepts, refer to the [wiki](https://github.com/samuelhulla/memoic/wiki)
 
