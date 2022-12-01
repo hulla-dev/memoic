@@ -84,7 +84,9 @@ function User({ id }: { id: string}) {
 }
 ```
 
-And voilá, you're good to go. Everything is taken care of for you out of the box. Even if your user switched to different tab and then came back, he will actually get served straight away with the cached data, no loading screen and  in the meantime we'll perform a recalidation on background.
+And voilá, you're good to go. Everything is taken care of for you out of the box. Even if your user switched to different tab and then came back, he will actually get served straight away with the cached data, no loading screen and  in the meantime we'll perform a revalidation on background.
+
+Also this takes care of type-checking for you. If you forgot to pass params, or id was of incorrect type then an error gets correctly raised. So you can sleep safe at night knowing your queries are always correct and working
 
 > **Note**  
 > For more advanced concepts, refer to the [wiki](https://github.com/samuelhulla/memoic/wiki)
