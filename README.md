@@ -47,7 +47,10 @@ Comes pre-packaged with **optional** extensions. They do not muddy the internal 
 - [`React Native`](https://github.com/samuelhulla/memoic/packages/native)
 - [`Firebase`](https://github.com/samuelhulla/memoic/)
 - `Supabase` - in progress
-- and more
+- ...
+
+### And much more
+This is only tip of the iceberg and we can include only so much into a single git page. But there is a lot more cool stuff you can do, like pre-fetching on trigger, infinite queries, type inferrence from getters and much more!
 
 ## Installation :bricks:
 Follow the instructions depending on your use-case.
