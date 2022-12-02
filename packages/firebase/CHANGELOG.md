@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.3.0
+
+### Minor Changes
+
+- Refactored snapshot caching
+
 ## 0.2.2
 
 ### Patch Changes
