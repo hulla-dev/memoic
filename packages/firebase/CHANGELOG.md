@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.2.2
+
+### Patch Changes
+
+- Fixes undefined data setting in observer
+
 ## 0.2.1
 
 ### Patch Changes
