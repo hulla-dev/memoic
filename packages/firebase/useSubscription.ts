@@ -1,34 +1,36 @@
 import { useCallback } from 'react'
 import { isLegacyRef } from './utils'
-import type { NativeDocRef, Unsubscribe, Updater, DocRef, Value } from './types'
+import type { NativeDocRef, Unsubscribe, DocRef, Value, Snapshot } from './types'
 import { QueryAdapter } from '@memoic/core/types'
 import type { DocumentSnapshot } from 'firebase/firestore'
 
+// Sad, but necessary because we need to hackishly accommodate both v8 and v9
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 export const useSubscription = <FetchFn extends QueryAdapter>(
-  data: DocRef<Value<FetchFn>> | NativeDocRef<Value<FetchFn>>,
+  ref: DocRef<Value<FetchFn>> | NativeDocRef<Value<FetchFn>>,
 ) =>
   useCallback(
-    (callback: Updater<Value<FetchFn>>, onError: (error: Error) => void): Unsubscribe => {
-      if (isLegacyRef(data)) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore correct type, but it infers an options object instead of a callback
-        return (data as NativeDocRef<Value<FetchFn>>).onSnapshot(
-          (snapshot: DocumentSnapshot<Value<FetchFn>>) =>
-            callback(snapshot.data() as Value<FetchFn>),
-          onError,
-        ) as Unsubscribe
+    (
+      callback: (snap: Snapshot<Value<FetchFn>> | DocumentSnapshot<Value<FetchFn>>) => void,
+      onError: (error: Error) => void,
+    ): Unsubscribe => {
+      if (isLegacyRef(ref)) {
+        // @ts-ignore
+        return ref.onSnapshot({
+          next: (snapshot: Snapshot<Value<FetchFn>>) => callback(snapshot),
+          error: onError,
+        }) as Unsubscribe
       }
       // unnecessary else but used for code splitting in tsup
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (!data.onSnapshot) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      if (!ref.onSnapshot) {
         // @ts-ignore
-        const { onSnapshot } = require('firebase/firestore') // eslint-disable-line @typescript-eslint/no-var-requires
+        const { onSnapshot } = require('firebase/firestore')
         return onSnapshot(
-          data as DocRef<Value<FetchFn>>,
-          (snapshot: DocumentSnapshot<Value<FetchFn>>) =>
-            callback(snapshot.data() as Value<FetchFn>),
+          ref as DocRef<Value<FetchFn>>,
+          (snapshot: DocumentSnapshot<Value<FetchFn>>) => callback(snapshot),
           onError,
         ) as Unsubscribe
       }
@@ -36,5 +38,5 @@ export const useSubscription = <FetchFn extends QueryAdapter>(
         'Missing onSnapshot method. Make sure your function returns DocumentReference or CollectionReference in v8 or you have v9 of firebase/firestore installed.',
       )
     },
-    [data],
+    [ref],
   )
