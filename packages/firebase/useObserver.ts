@@ -1,6 +1,7 @@
 import { QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Unsubscribe, Updater, QueryAdapter, Value } from './types'
+import type { Unsubscribe, QueryAdapter, Value, Snapshot } from './types'
 import { useEffect, useRef } from 'react'
+import { DocumentSnapshot } from 'firebase/firestore'
 
 /**
  * Handles firebase API subscriptions, since react-query is based on Promises
@@ -12,43 +13,51 @@ export function useObserver<FetchFn extends QueryAdapter>({
 }: {
   queryKey: QueryKey
   queryFn: FetchFn
-  subscribe: (callback: Updater<Value<FetchFn>>, onError: (error: Error) => void) => Unsubscribe
+  subscribe: (
+    callback: (snap: Snapshot<Value<FetchFn>> | DocumentSnapshot<Value<FetchFn>>) => void,
+    onError: (error: Error) => void,
+  ) => Unsubscribe
 }) {
-  const ref = useRef(false)
-  const { current: isActive } = ref
+  const unsubscribe = useRef<Unsubscribe | null>(null)
   const client = useQueryClient()
 
+  useEffect(() => {
+    const cleanup = unsubscribe.current
+    return () => {
+      if (cleanup) {
+        cleanup()
+      }
+    }
+  }, [])
+
   // instantiate fake promise for returning data
-  let resolve: (value?: Value<FetchFn>) => void
-  let reject: (error: Error) => void
+  let resolve: (value?: Value<FetchFn> & { id: string }) => void = () => null
+  let reject: (error: Error) => void = () => null
 
   const result = new Promise((res, err) => {
     resolve = res
     reject = err
   })
 
-  // add snapshot subscription
-  useEffect(() => {
-    const unsubscribe = subscribe(async (data) => {
-      if (!isActive) {
-        const cache = client.getQueryData(queryKey) as Value<FetchFn>
-        resolve(cache)
-        ref.current = true
-      } else {
-        if (data !== undefined) {
-          client.setQueryData(queryKey, data)
-          resolve(data)
+  let firstRun = true
+  if (!unsubscribe.current) {
+    unsubscribe.current = subscribe(
+      async (snap: Snapshot<Value<FetchFn>> | DocumentSnapshot<Value<FetchFn>>) => {
+        if (firstRun) {
+          resolve({ ...(snap.data() as Value<FetchFn>), id: snap.id })
+          firstRun = false
+        } else {
+          client.setQueryData(queryKey, { ...(snap.data() as Value<FetchFn>), id: snap.id })
         }
-      }
-    }, reject)
-    return () => {
-      ref.current = false
-      unsubscribe()
-    }
-  }, [])
+      },
+      reject,
+    )
+  } else {
+    resolve(client.getQueryData(queryKey))
+  }
 
-  return useQuery<ReturnType<FetchFn>>({
-    queryFn: () => result as Promise<ReturnType<FetchFn>>,
+  return useQuery<Value<FetchFn> & { id: string }>({
+    queryFn: () => result as Promise<Value<FetchFn> & { id: string }>,
     queryKey,
     retry: false,
     staleTime: Infinity,
