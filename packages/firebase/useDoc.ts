@@ -11,8 +11,8 @@ export function useDoc<FetchFn extends QueryAdapter>({
   queryKey: QueryKey
   queryFn: FetchFn
 }) {
-  const data = getRef(queryFn, queryKey) as DocRef<Value<FetchFn>> | NativeDocRef<Value<FetchFn>>
-  const subscribe = useSubscription(data)
+  const ref = getRef(queryFn, queryKey) as DocRef<Value<FetchFn>> | NativeDocRef<Value<FetchFn>>
+  const subscribe = useSubscription(ref)
 
   return useObserver({
     queryKey,

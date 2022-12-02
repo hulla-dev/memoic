@@ -32,7 +32,8 @@ export type NativeCollection<Result extends DocumentData> = NativeCollectionRef<
 export type NativeQuery<Result extends DocumentData = DocumentData> =
   FirebaseFirestoreTypes.Query<Result>
 
-export type Updater<Result> = (data?: Result) => Promise<void>
+export type Snapshot<T extends DocumentData = DocumentData> =
+  FirebaseFirestoreTypes.DocumentSnapshot<T>
 
 export type Unsubscribe = () => void
 
