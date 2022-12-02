@@ -1,5 +1,11 @@
 # memoic
 
+## 0.4.1
+
+### Patch Changes
+
+- Fixed incorrect query function dependency spread
+
 ## 0.4.0
 
 ### Minor Changes
