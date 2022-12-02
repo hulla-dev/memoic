@@ -35,8 +35,10 @@ export function useObserver<FetchFn extends QueryAdapter>({
         resolve(cache)
         ref.current = true
       } else {
-        client.setQueryData(queryKey, data)
-        resolve(data)
+        if (data !== undefined) {
+          client.setQueryData(queryKey, data)
+          resolve(data)
+        }
       }
     }, reject)
     return () => {
