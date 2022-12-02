@@ -1,73 +1,63 @@
-# Turborepo starter
+# Memoic :brain::zap:
+> "Fetching for users, written for devs" 
 
-This is an official pnpm starter turborepo.
+## What is it about? :thinking:
 
-## What's inside?
+For the longest time ever fetching has been a headache and it felt like **a compromise between**
+ - having super **complex fetching setup**, that is **awesome for users**, but makes your new dev **hires quit their job after 2 months**
+ - a **barebones fetching logic** that is easy to work with, but loading screens are inseparable part of your application
+ 
+This is where **Memoic** comes in! A package, that delivers both an awesome UX with pre-fetching, fetching and caching, ready with integrations for major framework/DB setups like [`Firebase`](packages/firebase), Supabase, MongoDB, etc. 
 
-This turborepo uses [pnpm](https://pnpm.io) as a package manager. It includes the following packages/apps:
+## Features :gem:
 
-### Apps and Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
+### Simple
+Tired of inconsistent `useEffect` behavior, asynchronous wrappers, pessimistic loading states?  Memoic comes with simple one-liner that handles everything for you. 
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+Not to mention, it provides caching for your next hits straight out of the box!
 
-### Utilities
-
-This turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run build
+```tsx
+function YourComponent() {
+  const { data, isLoading, error } = get('preferences') // ✅ always ready and deterministic
+}
 ```
 
-### Develop
+### Smart
+The get method with automatically handle the component life cycle and prop / state changes for you.
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm run dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-pnpm dlx turbo login
+```tsx
+function UserCart({ id }: { id: string }) {
+  const { data } = get('user', [id]) // 🧠 Refetches and revalidates on id change 
+}
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Typesafe
+Memoic ensures, that you always query for correct data with correct parameters
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your turborepo:
-
+```tsx
+function Usercart() {
+  const { data } = get('user', [42]) // ⛔️ Throws error, expects type string
+}
 ```
-pnpm dlx turbo link
-```
 
-## Useful Links
+### Extensible
+Comes pre-packaged with **optional** extensions. They do not muddy the internal core itself, but are extensible part of memoic that you can opt into. Memoic so far supports the following plugins/extensions
 
-Learn more about the power of Turborepo:
+- [`React Native`](packages/native)
+- [`Firebase`](packages/firebase)
+- `Supabase` - in progress
+- ...
 
-- [Pipelines](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+### And much more
+This is only tip of the iceberg and we can include only so much into a single git page. But there is a lot more cool stuff you can do, like pre-fetching on trigger, infinite queries, type inferrence from getters and much more!
+
+## Installation :bricks:
+Follow the instructions depending on your use-case.
+
+- [`@memoic/core`](packages/core) - The core of Memoic. Required for other extensions to work
+- [`@memoic/native`](packages/native) - React native adapter
+- [`@memoic/firebase`](packages/firebase) - Firebase adapter
+
+## Credits  ❤️
+This package would not be possible without the awesome work of [`@tanstack/query`](https://github.com/TanStack/query). As a matter of fact, if you are already using `@tanstack/react-query`, you can directly use the exported functions and they will work in unison with memoic! 😉
