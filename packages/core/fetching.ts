@@ -14,7 +14,7 @@ export const get =
     if (plugin && plugin.get) {
       return plugin.get({
         queryKey: [key, ...deps],
-        queryFn: ({ queryKey }) => queries[key].queryFn(...(queryKey.slice(1) || [])),
+        queryFn: queries[key].queryFn,
         params,
       })
     }
