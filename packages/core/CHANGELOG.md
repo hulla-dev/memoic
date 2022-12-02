@@ -1,5 +1,11 @@
 # memoic
 
+## 0.4.2
+
+### Patch Changes
+
+- Fixes plugin adapter get functions params
+
 ## 0.4.1
 
 ### Patch Changes
