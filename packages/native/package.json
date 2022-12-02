@@ -4,6 +4,9 @@
   "version": "0.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "tsup": {
     "entry": "./index.ts",
     "splitting": true,
