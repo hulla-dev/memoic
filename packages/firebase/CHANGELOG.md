@@ -1,5 +1,13 @@
 # @memoic/firebase
 
+## 0.2.1
+
+### Patch Changes
+
+- Fixes plugin adapter get functions params
+- Updated dependencies
+  - @memoic/core@0.4.2
+
 ## 0.2.0
 
 ### Minor Changes
