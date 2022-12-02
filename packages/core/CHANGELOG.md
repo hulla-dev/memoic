@@ -1,5 +1,11 @@
 # memoic
 
+## 0.4.0
+
+### Minor Changes
+
+- Interconnects adapters with the package core
+
 ## 0.3.0
 
 ### Minor Changes
