@@ -1,8 +1,8 @@
 import { createMemoic, query } from '@memoic/core'
-import { getById, getStafferById } from './getters'
+import { getById } from './getters'
 
 export const queries = {
-  staffer: query(getStafferById),
+  staffer: query(getById),
 }
 
 export const { get, prefetch } = createMemoic(queries)
