@@ -14,13 +14,13 @@ export const get =
     if (plugin && plugin.get) {
       return plugin.get({
         queryKey: [key, ...deps],
-        queryFn: queries[key].queryFn,
+        queryFn: ({ queryKey }) => queries[key].queryFn(...(queryKey.slice(1) || [])),
         params,
       })
     }
     return useQuery<Final<MemoicQueries[K]['queryFn']>>({
       queryKey: [key, ...deps],
-      queryFn: queries[key].queryFn,
+      queryFn: ({ queryKey }) => queries[key].queryFn(...(queryKey.slice(1) || [])),
     })
   }
 
