@@ -9,5 +9,5 @@ export function isLegacyRef<T extends DocumentData>(
 }
 
 export function getRef<Fn extends (...args: any[]) => any>(queryFn: Fn, queryKey: QueryKey) {
-  return queryFn(...queryKey.slice(1)) as NativeDocRef<Value<Fn>> | DocRef<Value<Fn>>
+  return queryFn(...(queryKey.slice(1) || [])) as NativeDocRef<Value<Fn>> | DocRef<Value<Fn>>
 }
