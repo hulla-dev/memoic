@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.7
+
+### Patch Changes
+
+- Fixes subscription event count
+
 ## 0.4.6
 
 ### Patch Changes
