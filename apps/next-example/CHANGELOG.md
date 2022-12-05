@@ -1,5 +1,13 @@
 # next-example
 
+## 0.1.5
+
+### Patch Changes
+
+- Adds support for default options, prefetch guard inferred from passed params
+- Updated dependencies
+  - @memoic/core@0.5.1
+
 ## 0.1.4
 
 ### Patch Changes
