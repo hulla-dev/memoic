@@ -7,7 +7,7 @@ export function query<Fn extends (...args: any[]) => any, Result = ReturnType<Fn
   options?: UseQueryOptions,
 ) {
   return {
-    queryFn: (...deps: Parameters<Fn>) => fn(...deps) as Result,
+    queryFn: (...deps: Parameters<Fn>): Awaited<Result> => fn(...deps),
     options,
     initialParams,
   }
