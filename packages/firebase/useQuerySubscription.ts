@@ -1,26 +1,24 @@
 import { useCallback } from 'react'
-import type { Query } from 'firebase/firestore'
+import type { CollectionReference, Query, QuerySnapshot } from 'firebase/firestore'
+import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import type {
   Unsubscribe,
-  NativeCollectionRef,
+  QueryVariation,
   Value,
-  CollectionRef,
-  QuerySnapshot,
-  NativeQuery,
+  GetVariation,
 } from './types'
-import type { QueryAdapter } from '@memoic/core/types'
 import { isLegacyQuery } from './utils'
 
 // Sad, but necessary because we need to hackishly accommodate both v8 and v9
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-export const useQuerySubscription = <Fn extends QueryAdapter>(
+export const useQuerySubscription = <Fn extends GetVariation>(
   ref:
-    | NativeCollectionRef<Value<Fn>>
-    | CollectionRef<Value<Fn>>
-    | NativeQuery<Value<Fn>>
-    | Query<Value<Fn>>,
+    | FirebaseFirestoreTypes.CollectionReference<Value<Fn>>
+    | CollectionReference<Value<Fn>>
+    | FirebaseFirestoreTypes.Query<Value<Fn>>
+    | Query<Value<Fn>>
 ) =>
   useCallback(
     (
@@ -41,7 +39,7 @@ export const useQuerySubscription = <Fn extends QueryAdapter>(
         // @ts-ignore
         const { onSnapshot } = require('firebase/firestore')
         return onSnapshot(
-          ref as CollectionRef<Value<Fn>>,
+          ref as QueryVariation<Value<Fn>>,
           (snapshot: QuerySnapshot<Value<Fn>>) =>
             callback(snapshot.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Value<Fn>) }))),
           onError,

@@ -1,45 +1,13 @@
 import type {
   DocumentReference,
   CollectionReference,
-  Query as QueryType,
-  QuerySnapshot as WebQuerySnapshot,
+  Query,
   DocumentData,
 } from 'firebase/firestore'
 import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import type { UseQueryOptions, QueryKey, UseQueryResult } from '@tanstack/react-query'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-export type DocRef<DataOrRef> = DataOrRef extends DocumentReference<DataOrRef>
-  ? DataOrRef
-  : DocumentReference<DataOrRef>
-
-export type CollectionRef<Result> = Result extends CollectionReference<Result>
-  ? Result
-  : CollectionReference<Result>
-
-export type NativeDocRef<Result extends DocumentData> =
-  Result extends FirebaseFirestoreTypes.DocumentReference<Result>
-    ? Result
-    : FirebaseFirestoreTypes.DocumentReference<Result>
-
-export type NativeCollectionRef<Result extends DocumentData> =
-  Result extends FirebaseFirestoreTypes.CollectionReference<Result>
-    ? Result
-    : FirebaseFirestoreTypes.CollectionReference<Result>
-
-export type NativeCollection<Result extends DocumentData> = NativeCollectionRef<Result>
-
-export type NativeQuery<Result extends DocumentData = DocumentData> =
-  FirebaseFirestoreTypes.Query<Result>
-
-export type Snapshot<T extends DocumentData = DocumentData> =
-  FirebaseFirestoreTypes.DocumentSnapshot<T>
-
-export type NativeQuerySnapshot<T extends DocumentData = DocumentData> =
-  FirebaseFirestoreTypes.QuerySnapshot<T>
-
-export type QuerySnapshot<T extends DocumentData = DocumentData> = WebQuerySnapshot<T>
 
 export type Unsubscribe = () => void
 
@@ -60,26 +28,9 @@ export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends 
   params?: UseQueryOptions & Record<string, unknown>
 }) => UseQueryResult<Return, Error>
 
-export type Value<
-  Fn extends (...args: any[]) => any,
-  R = ReturnType<Fn>,
-> = R extends DocumentReference<infer T>
-  ? T
-  : R extends CollectionReference<infer T>
-  ? T
-  : R extends QueryType<infer T>
-  ? T
-  : R extends FirebaseFirestoreTypes.DocumentReference<infer T>
-  ? T
-  : R extends FirebaseFirestoreTypes.CollectionReference<infer T>
-  ? T
-  : R extends FirebaseFirestoreTypes.Query<infer T>
-  ? T
-  : R
-
 export type ObserverType = 'doc' | 'query'
 
-export type DocValue<Fn> = Fn extends (...args: any[]) => infer R
+export type Value<Fn> = Fn extends (...args: any[]) => infer R
   ? R extends DocumentReference<infer T>
     ? T
     : R extends FirebaseFirestoreTypes.DocumentReference<infer T>
@@ -88,12 +39,18 @@ export type DocValue<Fn> = Fn extends (...args: any[]) => infer R
     ? T
     : R extends FirebaseFirestoreTypes.CollectionReference<infer T>
     ? T
-    : R extends QueryType<infer T>
+    : R extends Query<infer T>
     ? T
     : R extends FirebaseFirestoreTypes.Query<infer T>
     ? T
     : R
   : never
 
-export type Res<Fn extends QueryAdapter> = Value<Fn> & { id: string }
-export type Return<Fn extends QueryAdapter, O extends ObserverType> = O extends 'doc' ? Res<Fn> : Res<Fn>[]
+export type QueryVariation<T extends DocumentData> = CollectionReference<T> | Query<T>
+export type NativeQueryVariation<T extends DocumentData> = FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.Query<T>
+
+export type GetReturnVariation<T extends DocumentData = DocumentData> = CollectionReference<T> | Query<T> | DocumentReference<T> | FirebaseFirestoreTypes.DocumentReference<T> | FirebaseFirestoreTypes.Query<T> | FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.DocumentReference<T>
+export type GetVariation<T extends DocumentData = DocumentData> = (...args: any[]) => GetReturnVariation<T>
+
+export type Res<Fn extends GetVariation> = Value<Fn> & { id: string }
+export type Return<Fn extends GetVariation, O extends ObserverType> = O extends 'doc' ? Res<Fn> : Res<Fn>[]

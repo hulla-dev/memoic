@@ -1,10 +1,10 @@
 import type { QueryKey, UseQueryOptions } from '@tanstack/react-query'
-import type { QueryAdapter, ObserverType, Return } from './types'
+import type { ObserverType, Return, GetVariation } from './types'
 import { getRef } from './utils'
 import { useObserver } from './useObserver'
 import { useSubscription } from './useSubscription'
 
-export function useDoc<FetchFn extends QueryAdapter>({
+export function useDoc<FetchFn extends GetVariation>({
   queryKey,
   queryFn,
   options,
