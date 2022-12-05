@@ -2,6 +2,7 @@ import type {
   DocumentReference,
   CollectionReference,
   Query as QueryType,
+  QuerySnapshot as WebQuerySnapshot,
   DocumentData,
 } from 'firebase/firestore'
 import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
@@ -35,14 +36,21 @@ export type NativeQuery<Result extends DocumentData = DocumentData> =
 export type Snapshot<T extends DocumentData = DocumentData> =
   FirebaseFirestoreTypes.DocumentSnapshot<T>
 
+export type NativeQuerySnapshot<T extends DocumentData = DocumentData> =
+  FirebaseFirestoreTypes.QuerySnapshot<T>
+
+export type QuerySnapshot<T extends DocumentData = DocumentData> = WebQuerySnapshot<T>
+
 export type Unsubscribe = () => void
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AsyncFn = (...args: any[]) => Promise<any>
 
-export type Final<Fn extends AsyncFn> = ReturnType<Fn> extends Promise<infer T> ? Awaited<T> : never
+export type Final<Fn extends AsyncFn> = ReturnType<Fn> extends Promise<infer T>
+  ? Awaited<T>
+  : ReturnType<Fn>
 
-export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn = AsyncFn>({
+export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends AsyncFn = AsyncFn>({
   queryKey,
   queryFn,
   params,
@@ -50,7 +58,7 @@ export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn 
   queryKey: Key
   queryFn: Fn
   params?: UseQueryOptions & Record<string, unknown>
-}) => UseQueryResult<Final<Fn>, Error>
+}) => UseQueryResult<Return, Error>
 
 export type Value<
   Fn extends (...args: any[]) => any,
@@ -68,3 +76,21 @@ export type Value<
   : R extends FirebaseFirestoreTypes.Query<infer T>
   ? T
   : R
+
+export type ObserverType = 'doc' | 'query'
+
+export type DocValue<Fn> = Fn extends (...args: any[]) => infer R
+  ? R extends DocumentReference<infer T>
+    ? T
+    : R extends FirebaseFirestoreTypes.DocumentReference<infer T>
+    ? T
+    : R extends CollectionReference<infer T>
+    ? T
+    : R extends FirebaseFirestoreTypes.CollectionReference<infer T>
+    ? T
+    : R extends QueryType<infer T>
+    ? T
+    : R extends FirebaseFirestoreTypes.Query<infer T>
+    ? T
+    : R
+  : never
