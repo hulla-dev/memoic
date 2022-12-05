@@ -1,5 +1,13 @@
 # @memoic/firebase
 
+## 0.4.1
+
+### Patch Changes
+
+- Adds support for default options, prefetch guard inferred from passed params
+- Updated dependencies
+  - @memoic/core@0.5.1
+
 ## 0.4.0
 
 ### Minor Changes
