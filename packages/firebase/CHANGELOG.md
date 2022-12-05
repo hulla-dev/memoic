@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.6
+
+### Patch Changes
+
+- Addresses issue with promise resolution
+
 ## 0.4.5
 
 ### Patch Changes
