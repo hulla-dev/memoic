@@ -1,5 +1,5 @@
 import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions, hashQueryKey } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
 type Observer = {
@@ -7,6 +7,8 @@ type Observer = {
   initState: number,
   refetchState: number
 }
+
+let obs: Record<string, Observer> = {}
 
 /**
  * Handles firebase API subscriptions, since react-query is based on Promises
@@ -26,35 +28,33 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   type: O,
   options?: UseQueryOptions<Return<Fn, O>, Error>
 }): UseQueryResult<Return<Fn, O>, Error> {
-  const ref = useRef<Record<string, Observer>>({})
-  const subs = ref.current
   const client = useQueryClient()
-  const hash = hashQueryKey(queryKey) as keyof typeof subs
+  const hash = hashQueryKey(queryKey) as keyof typeof obs
 
-  ref.current = {
-    ...(ref.current || {}),
+  obs = {
+    ...(obs || {}),
     [hash]: {
-      ...(ref.current[hash] || {}),
+      ...(obs[hash] || {}),
     }
   }
 
-  subs[hash].refetchState ??= 1
+  obs[hash].refetchState ??= 1
 
-  const cleanup = (hashId: keyof typeof subs) => {
-    if (subs[hashId].refetchState === 1) {
+  const cleanup = (hashId: keyof typeof obs) => {
+    if (obs[hashId].refetchState === 1) {
       // needs to be a direct reference otherwise it can get lost in useEffect during unsubscription
-      const unsubscribe = subs[hashId].unsubscribe
+      const unsubscribe = obs[hashId].unsubscribe
       if (unsubscribe) {
         unsubscribe()
-        delete subs[hashId]
+        delete obs[hashId]
       }
     }
   }
 
   useEffect(() => {
-    subs[hash].refetchState += 1
+    obs[hash].refetchState += 1
     return () => {
-      subs[hash].refetchState -= 1
+      obs[hash].refetchState -= 1
       cleanup(hash)
     }
   }, [])
@@ -69,22 +69,22 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   })
 
   let unsubscribe: Unsubscribe | undefined = undefined
-  if (subs[hash].unsubscribe) {
-    unsubscribe = subs[hash].unsubscribe
+  if (obs[hash].unsubscribe) {
+    unsubscribe = obs[hash].unsubscribe
     const data = client.getQueryData<Return<Fn, O>>(queryKey)
     resolve(data || null)
   } else {
     unsubscribe = subscribe(async (data: Return<Fn, O>) => {
-      subs[hash].initState ??= 0
-      subs[hash].initState += 1
-      if (subs[hash].initState === 1) {
+      obs[hash].initState ??= 0
+      obs[hash].initState += 1
+      if (obs[hash].initState === 1) {
         resolve(data || null)
       } else {
         client.setQueryData(queryKey, data)
       }
     }, reject)
   }
-  subs[hash].unsubscribe = unsubscribe
+  obs[hash].unsubscribe = unsubscribe
 
   return useQuery<Return<Fn, O>, Error>({
     ...(options || {}),
