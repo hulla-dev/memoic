@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.9
+
+### Patch Changes
+
+- Fixes bug with undefined hash property on observer
+
 ## 0.4.8
 
 ### Patch Changes
