@@ -1,4 +1,10 @@
-import { FetchQueryOptions, useQuery, useQueryClient, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
+import {
+  FetchQueryOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query'
 import { Plugin, Res, QueryMap, Queries } from './types'
 import { getOptions } from './utils'
 

@@ -29,9 +29,9 @@ export type Res<Fn> = Fn extends (...args: any[]) => infer R
     : R
   : Fn
 
-  export type QueryMap<Prefetch extends Queries = Queries> = {
-    [K in keyof Prefetch]: Prefetch[K]
-  }
+export type QueryMap<Prefetch extends Queries = Queries> = {
+  [K in keyof Prefetch]: Prefetch[K]
+}
 
 export type MemoicProps<Queries extends Record<string, Query>> = {
   children: ReactNode
@@ -52,7 +52,7 @@ export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn 
 export type Plugin<Adapter extends QueryAdapter = QueryAdapter> = {
   get?: Adapter
   prefetch?: (...args: Parameters<Adapter>) => Promise<void>
-  queryOptions?: UseQueryOptions<Res<Adapter>, Error> 
+  queryOptions?: UseQueryOptions<Res<Adapter>, Error>
   infiniteQueryOptions?: UseInfiniteQueryOptions & Record<string, unknown>
   preFetchOptions?: FetchQueryOptions & Record<string, unknown>
 }
@@ -68,10 +68,7 @@ export type ApplyArgs<Fn extends AsyncFn, Param = Parameters<Fn>> = {
   [K in keyof Param]?: Param[K]
 }
 
-export type Params<PluginOptions extends Record<string, unknown> | undefined>  = UseQueryOptions & PluginOptions
+export type Params<PluginOptions extends Record<string, unknown> | undefined> = UseQueryOptions &
+  PluginOptions
 
-export type Defined<T> = T extends Array<infer V>
-   ? V extends undefined
-      ? never
-      : V
-   : never
+export type Defined<T> = T extends Array<infer V> ? (V extends undefined ? never : V) : never
