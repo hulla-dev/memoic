@@ -31,6 +31,13 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   const client = useQueryClient()
   const hash = hashQueryKey(queryKey) as keyof typeof subs
 
+  ref.current = {
+    ...(ref.current || {}),
+    [hash]: {
+      ...(ref.current[hash] || {}),
+    }
+  }
+
   subs[hash].refetchState ??= 1
 
   const cleanup = (hashId: keyof typeof subs) => {
