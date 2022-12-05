@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.4
+
+### Patch Changes
+
+- Fixes issues with undefined options
+
 ## 0.4.3
 
 ### Patch Changes
