@@ -1,36 +1,32 @@
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import type { QueryKey } from '@tanstack/react-query'
-import type { DocumentData, Query } from 'firebase/firestore'
+import type { CollectionReference, DocumentData, DocumentReference, Query } from 'firebase/firestore'
 import type {
-  CollectionRef,
-  DocRef,
-  NativeCollection,
-  NativeDocRef,
-  NativeQuery,
   ObserverType,
   Value,
 } from './types'
 
-type QueryVariation<T extends DocumentData> = CollectionRef<T> | Query<T>
+type QueryVariation<T extends DocumentData> = CollectionReference<T> | Query<T>
 
-type NativeQueryVariation<T extends DocumentData> = NativeCollection<T> | NativeQuery<T>
+type NativeQueryVariation<T extends DocumentData> = FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.Query<T>
 
 export function isDocument(
   ref:
-    | DocRef<DocumentData>
-    | NativeDocRef<DocumentData>
+    | DocumentReference<DocumentData>
+    | FirebaseFirestoreTypes.DocumentReference<DocumentData>
     | QueryVariation<DocumentData>
     | NativeQueryVariation<DocumentData>,
-): ref is DocRef<DocumentData> | NativeDocRef<DocumentData> {
+): ref is DocumentReference<DocumentData> | FirebaseFirestoreTypes.DocumentReference<DocumentData> {
   return (
-    (ref as DocRef<DocumentData>)?.type === 'document' ||
+    (ref as DocumentReference<DocumentData>)?.type === 'document' ||
     (ref as NativeQueryVariation<DocumentData>)?.where === undefined
   )
 }
 
 export function isLegacyRef<T extends DocumentData>(
-  ref: NativeDocRef<T> | DocRef<T>,
-): ref is NativeDocRef<T> {
-  return !!(ref as NativeDocRef<T>).onSnapshot
+  ref: FirebaseFirestoreTypes.DocumentReference<T> | DocumentReference<T>,
+): ref is FirebaseFirestoreTypes.DocumentReference<T> {
+  return !!(ref as FirebaseFirestoreTypes.DocumentReference<T>).onSnapshot
 }
 
 export function isLegacyQuery<T extends DocumentData>(
@@ -45,6 +41,6 @@ export function getRef<Fn extends (...args: any[]) => any, O extends ObserverTyp
   queryKey: QueryKey,
 ) {
   return queryFn(...(queryKey.slice(1) || [])) as O extends 'doc'
-    ? DocRef<Value<Fn>> | NativeDocRef<Value<Fn>>
+    ? FirebaseFirestoreTypes.DocumentReference<Value<Fn>> | DocumentReference<Value<Fn>>
     : QueryVariation<Value<Fn>> | NativeQueryVariation<Value<Fn>>
 }
