@@ -44,13 +44,13 @@ export type QuerySnapshot<T extends DocumentData = DocumentData> = WebQuerySnaps
 export type Unsubscribe = () => void
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AsyncFn = (...args: any[]) => Promise<any>
+type AnyFn = (...args: any[]) => Promise<any>
 
-export type Final<Fn extends AsyncFn> = ReturnType<Fn> extends Promise<infer T>
+export type Final<Fn extends AnyFn> = ReturnType<Fn> extends Promise<infer T>
   ? Awaited<T>
   : ReturnType<Fn>
 
-export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends AsyncFn = AsyncFn>({
+export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends AnyFn = AnyFn>({
   queryKey,
   queryFn,
   params,
