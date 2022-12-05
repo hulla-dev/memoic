@@ -1,16 +1,19 @@
 import { useDoc } from './useDoc'
 import { useQuery } from './useQuery'
 import { getRef, isDocument } from './utils'
-import {QueryAdapter } from './types'
-import { QueryKey } from '@tanstack/react-query'
+import { QueryAdapter, Return } from './types'
+import type { QueryKey, UseQueryOptions } from '@tanstack/react-query'
+import { getOptions } from '@memoic/core'
 
 
-const fireGet = <Fn extends QueryAdapter>({ queryFn, queryKey }: { queryFn: Fn, queryKey: QueryKey }) => {
+const fireGet = <Fn extends QueryAdapter>({ queryFn, queryKey, options: opt }: { queryFn: Fn, queryKey: QueryKey, options?: UseQueryOptions<Return<Fn, 'doc' | 'query'>> }) => {
   const ref = getRef(queryFn, queryKey)
   if (isDocument(ref)) {
-    return useDoc({ queryFn, queryKey })
+    const options = getOptions(opt, queryKey) as UseQueryOptions<Return<Fn, 'doc'>, Error>
+    return useDoc({ queryFn, queryKey, options })
   }
-  return useQuery({ queryFn, queryKey })
+  const options = getOptions(opt, queryKey) as UseQueryOptions<Return<Fn, 'query'>, Error>
+  return useQuery({ queryFn, queryKey, options })
 }
 
 export const firebase = {
