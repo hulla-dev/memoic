@@ -1,5 +1,5 @@
 export { Memoic } from './Memoic'
 export { query } from './queries'
 export { createMemoic } from './createMemoic'
-export { apply, seconds } from './utils'
+export { apply, seconds, getOptions } from './utils'
 export type { Plugin, Query } from './types'
