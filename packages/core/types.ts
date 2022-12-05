@@ -11,28 +11,32 @@ import type { ReactNode } from 'react'
 
 export type QueryDependency<Fn extends AsyncFn = AsyncFn> = Parameters<Fn>
 
-export type Final<Fn extends AsyncFn> = ReturnType<Fn> extends Promise<infer T> ? Awaited<T> : never
-
-export type AsyncFn = (...args: any[]) => Promise<any> | any
+export type AsyncFn = (...args: any[]) => any
 
 export type Query<Fn extends AsyncFn = AsyncFn> = {
   queryFn: Fn
   initialParams?: QueryDependency<Fn>
-  options?: UseQueryOptions
+  options?: UseQueryOptions<ReturnType<Fn>>
 }
 
 export type Queries<Fn extends AsyncFn = AsyncFn> = {
   [key: string]: Query<Fn>
 }
 
-export type QueryMap<Prefetch extends Queries = Queries> = {
-  [K in keyof Prefetch]: Prefetch[K]
-}
+export type Res<Fn> = Fn extends (...args: any[]) => infer R
+  ? R extends Promise<infer AR>
+    ? AR
+    : R
+  : Fn
 
-export type MemoicProps<Prefetch extends Queries> = {
+  export type QueryMap<Prefetch extends Queries = Queries> = {
+    [K in keyof Prefetch]: Prefetch[K]
+  }
+
+export type MemoicProps<Queries extends Record<string, Query>> = {
   children: ReactNode
-  queries: QueryMap<Prefetch>
-  initial?: (keyof Partial<QueryMap<Prefetch>>)[]
+  queries: QueryMap<Queries>
+  initial?: (keyof Partial<QueryMap<Queries>>)[]
 }
 
 export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn = AsyncFn>({
@@ -43,10 +47,10 @@ export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn 
   queryKey: Key
   queryFn: Fn
   params?: UseQueryOptions & Record<string, unknown>
-}) => UseQueryResult<Final<Fn> | ReturnType<Fn>, Error | unknown>
+}) => UseQueryResult<Res<Fn>, Error | unknown>
 
-export type Plugin = {
-  get?: QueryAdapter
+export type Plugin<Adapter extends QueryAdapter = QueryAdapter> = {
+  get?: Adapter
   prefetch?: (...args: Parameters<QueryAdapter>) => Promise<void>
   queryOptions?: UseQueryOptions & Record<string, unknown>
   infiniteQueryOptions?: UseInfiniteQueryOptions & Record<string, unknown>

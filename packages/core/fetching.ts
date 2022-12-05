@@ -1,16 +1,16 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Queries, QueryMap, Final, Plugin } from './types'
+import { useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query'
+import { Query, Plugin, Res, QueryMap, Queries } from './types'
 
 export const get =
-  <MemoicQueries extends QueryMap<Queries>, MemoicPlugin extends Plugin>(
-    queries: MemoicQueries,
+  <MQueries extends QueryMap<Queries>, MemoicPlugin extends Plugin>(
+    queries: MQueries,
     plugin?: MemoicPlugin,
   ) =>
-  <K extends keyof MemoicQueries>(
+  <K extends keyof MQueries>(
     key: K,
-    deps: Parameters<MemoicQueries[K]['queryFn']>,
+    deps: Parameters<MQueries[K]['queryFn']>,
     params?: MemoicPlugin['queryOptions'],
-  ) => {
+  ): UseQueryResult<Res<MQueries[K]['queryFn']>> => {
     if (plugin && plugin.get) {
       return plugin.get({
         queryKey: [key, ...deps],
@@ -18,20 +18,20 @@ export const get =
         params,
       })
     }
-    return useQuery<Final<MemoicQueries[K]['queryFn']>>({
+    return useQuery({
       queryKey: [key, ...deps],
       queryFn: ({ queryKey }) => queries[key].queryFn(...(queryKey.slice(1) || [])),
     })
   }
 
 export const prefetch =
-  <MemoicQueries extends QueryMap<Queries>, MemoicPlugin extends Plugin>(
-    queries: MemoicQueries,
+  <Queries extends Record<string, Query>, MemoicPlugin extends Plugin>(
+    queries: { [K in keyof Queries]: Query<Queries[K]['queryFn']> },
     plugin?: MemoicPlugin,
   ) =>
-  async <K extends keyof MemoicQueries>(
+  async <K extends keyof Queries>(
     key: K,
-    deps: Parameters<MemoicQueries[K]['queryFn']>,
+    deps: Parameters<Queries[K]['queryFn']>,
     params?: MemoicPlugin['preFetchOptions'],
   ) => {
     if (plugin && plugin.prefetch) {
