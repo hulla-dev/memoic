@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import { entries, seconds } from './utils'
-import type { QueryMap, Queries, MemoicProps } from './types'
+import type { Queries, MemoicProps, QueryMap } from './types'
 
 const client = new QueryClient({ defaultOptions: { queries: { staleTime: seconds(20) } } })
 
-function prefetchQueries<Prefetch extends Queries>(queryMap: QueryMap<Prefetch>) {
+function prefetchQueries<MQ extends Queries>(queryMap: QueryMap<MQ>) {
   return Promise.all(
     entries(queryMap).map(async ([key, { queryFn, initialParams }]) =>
       client.prefetchQuery({
@@ -17,11 +17,11 @@ function prefetchQueries<Prefetch extends Queries>(queryMap: QueryMap<Prefetch>)
   )
 }
 
-export function Memoic<MemoicQueries extends Queries>({
+export function Memoic<MQ extends Queries>({
   children,
   queries,
-  initial = [] as (keyof MemoicQueries)[],
-}: MemoicProps<MemoicQueries>) {
+  initial = [] as (keyof MQ)[],
+}: MemoicProps<MQ>) {
   const didInitialPrefetch = useRef(false)
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export function Memoic<MemoicQueries extends Queries>({
       // 1. Override options for queries that have them defined
       const queriesWithOptions = entries(queries).reduce(
         (result, [key, builder]) => (builder.options ? result : { ...result, [key]: builder }),
-        {} as QueryMap,
+        {} as QueryMap<MQ>,
       )
       entries(queriesWithOptions).forEach(([key, { initialParams, options }]) => {
         client.setQueryDefaults([key, initialParams], options as UseQueryOptions)
@@ -38,7 +38,7 @@ export function Memoic<MemoicQueries extends Queries>({
       const prefetchableQueries = entries(queries).reduce(
         (result, [key, builder]) =>
           initial.includes(key) ? result : { ...result, [key]: builder },
-        {} as QueryMap,
+        {} as QueryMap<MQ>,
       )
       prefetchQueries(prefetchableQueries)
       didInitialPrefetch.current = true
