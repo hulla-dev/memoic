@@ -94,3 +94,6 @@ export type DocValue<Fn> = Fn extends (...args: any[]) => infer R
     ? T
     : R
   : never
+
+export type Res<Fn extends QueryAdapter> = Value<Fn> & { id: string }
+export type Return<Fn extends QueryAdapter, O extends ObserverType> = O extends 'doc' ? Res<Fn> : Res<Fn>[]
