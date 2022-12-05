@@ -1,7 +1,12 @@
-import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
+import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions, hashQueryKey } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
+type Observer = {
+  unsubscribe: Unsubscribe,
+  init?: boolean,
+}
+const subs: Record<string, Observer> = {}
 
 /**
  * Handles firebase API subscriptions, since react-query is based on Promises
@@ -21,14 +26,14 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   type: O,
   options?: UseQueryOptions<Return<Fn, O>, Error>
 }): UseQueryResult<Return<Fn, O>, Error> {
-  const unsubscribe = useRef<Unsubscribe | null>(null)
   const client = useQueryClient()
+  const hash = hashQueryKey(queryKey)
 
   useEffect(() => {
-    const cleanup = unsubscribe.current
     return () => {
-      if (cleanup) {
-        cleanup()
+      if (subs[hash].unsubscribe !== undefined) {
+        subs[hash].unsubscribe()
+        delete subs[hash]
       }
     }
   }, [])
@@ -42,18 +47,26 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
     reject = err
   })
 
-  let firstRun = true
-  if (!unsubscribe.current) {
-    unsubscribe.current = subscribe(async (data: Return<Fn, O>) => {
-      if (firstRun) {
-        resolve(data)
-        firstRun = false
+  if (subs[hash].unsubscribe !== undefined) {
+    const data = client.getQueryData<Return<Fn, O>>(queryKey)
+    if (data !== undefined) {
+      resolve(data)
+    } else {
+      client.invalidateQueries(queryKey)
+    }
+  } else {
+    subs[hash].unsubscribe = subscribe(async (data: Return<Fn, O>) => {
+      if(!subs[hash].init) {
+        subs[hash].init = true
+        if (data !== undefined) {
+          resolve(data)
+        } else {
+          client.invalidateQueries(queryKey)
+        }
       } else {
         client.setQueryData(queryKey, data)
       }
     }, reject)
-  } else {
-    resolve(client.getQueryData(queryKey))
   }
 
   return useQuery<Return<Fn, O>, Error>({
