@@ -42,11 +42,11 @@ export type MemoicProps<Queries extends Record<string, Query>> = {
 export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn = AsyncFn>({
   queryKey,
   queryFn,
-  params,
+  options,
 }: {
   queryKey: Key
   queryFn: Fn
-  params?: UseQueryOptions & Record<string, unknown>
+  options?: UseQueryOptions<Res<Fn>>
 }) => UseQueryResult<Res<Fn>, Error | unknown>
 
 export type Plugin<Adapter extends QueryAdapter = QueryAdapter> = {
@@ -67,3 +67,11 @@ export type ExcludeParams<Skipped extends any[], Params extends any[]> = Params 
 export type ApplyArgs<Fn extends AsyncFn, Param = Parameters<Fn>> = {
   [K in keyof Param]?: Param[K]
 }
+
+export type Params<PluginOptions extends Record<string, unknown> | undefined>  = UseQueryOptions & PluginOptions
+
+export type Defined<T> = T extends Array<infer V>
+   ? V extends undefined
+      ? never
+      : V
+   : never
