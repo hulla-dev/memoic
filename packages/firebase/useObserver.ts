@@ -1,11 +1,7 @@
-import { QueryKey, useQuery, useQueryClient, UseQueryResult } from '@tanstack/react-query'
+import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
-import type { Unsubscribe, QueryAdapter, Value, ObserverType } from './types'
+import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
-// in this case query behaves same for collection and actual query
-// essentially collection is just a query with no filters
-type Res<Fn extends QueryAdapter> = Value<Fn> & { id: string }
-type Return<Fn extends QueryAdapter, O extends ObserverType> = O extends 'doc' ? Res<Fn> : Res<Fn>[]
 
 /**
  * Handles firebase API subscriptions, since react-query is based on Promises
@@ -14,6 +10,7 @@ type Return<Fn extends QueryAdapter, O extends ObserverType> = O extends 'doc' ?
 export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   queryKey,
   subscribe,
+  options,
 }: {
   queryKey: QueryKey
   queryFn: Fn
@@ -21,7 +18,8 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
     callback: (res: Return<Fn, O>) => void,
     onError: (error: Error) => void,
   ) => Unsubscribe
-  type: O
+  type: O,
+  options?: UseQueryOptions<Return<Fn, O>, Error>
 }): UseQueryResult<Return<Fn, O>, Error> {
   const unsubscribe = useRef<Unsubscribe | null>(null)
   const client = useQueryClient()
@@ -59,6 +57,7 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   }
 
   return useQuery<Return<Fn, O>, Error>({
+    ...(options || {}),
     queryFn: () => result as Promise<Return<Fn, O>>,
     queryKey,
     retry: false,
