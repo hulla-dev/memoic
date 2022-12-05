@@ -1,5 +1,16 @@
 # @memoic/firebase
 
+## 0.4.0
+
+### Minor Changes
+
+- Fixes TS issues with deps and return, adds support for querying and collection on firebase
+
+### Patch Changes
+
+- Updated dependencies
+  - @memoic/core@0.5.0
+
 ## 0.3.0
 
 ### Minor Changes
