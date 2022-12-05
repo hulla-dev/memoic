@@ -3,8 +3,9 @@ import { useEffect } from 'react'
 import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
 type Observer = {
-  unsubscribe: Unsubscribe,
+  unsubscribe: Unsubscribe | undefined,
   init?: boolean,
+  refetchState: number
 }
 const subs: Record<string, Observer> = {}
 
@@ -29,12 +30,24 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   const client = useQueryClient()
   const hash = hashQueryKey(queryKey)
 
-  useEffect(() => {
-    return () => {
-      if (subs[hash].unsubscribe !== undefined) {
-        subs[hash].unsubscribe()
-        delete subs[hash]
+  subs[hash].refetchState ??= 1
+
+  const cleanup = (hashId: keyof typeof subs) => {
+    if (subs[hashId].refetchState === 1) {
+      // needs to be a direct reference otherwise it can get lost in useEffect during unsubscription
+      const unsubscribe = subs[hashId].unsubscribe
+      if (unsubscribe) {
+        unsubscribe()
+        delete subs[hashId]
       }
+    }
+  }
+
+  useEffect(() => {
+    subs[hash].refetchState += 1
+    return () => {
+      subs[hash].refetchState -= 1
+      cleanup(hash)
     }
   }, [])
 
@@ -47,7 +60,9 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
     reject = err
   })
 
-  if (subs[hash].unsubscribe !== undefined) {
+  let unsubscribe: Unsubscribe | undefined = undefined
+  if (subs[hash].unsubscribe) {
+    unsubscribe = subs[hash].unsubscribe
     const data = client.getQueryData<Return<Fn, O>>(queryKey)
     if (data !== undefined) {
       resolve(data)
@@ -55,19 +70,16 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
       client.invalidateQueries(queryKey)
     }
   } else {
-    subs[hash].unsubscribe = subscribe(async (data: Return<Fn, O>) => {
-      if(!subs[hash].init) {
-        subs[hash].init = true
-        if (data !== undefined) {
-          resolve(data)
-        } else {
-          client.invalidateQueries(queryKey)
-        }
+    unsubscribe = subscribe(async (data: Return<Fn, O>) => {
+      if (subs[hash].init) {
+        client.setQueriesData(queryKey, data)
       } else {
-        client.setQueryData(queryKey, data)
+        resolve(data || null)
+        subs[hash].init = true
       }
     }, reject)
   }
+  subs[hash].unsubscribe = unsubscribe
 
   return useQuery<Return<Fn, O>, Error>({
     ...(options || {}),
