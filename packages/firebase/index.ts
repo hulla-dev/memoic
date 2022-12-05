@@ -3,7 +3,7 @@ import { useQuery } from './useQuery'
 import { getRef, isDocument } from './utils'
 import { QueryAdapter, Return } from './types'
 import type { QueryKey, UseQueryOptions } from '@tanstack/react-query'
-import { getOptions } from '@memoic/core'
+import { getOptions, Plugin } from '@memoic/core'
 
 
 const fireGet = <Fn extends QueryAdapter>({ queryFn, queryKey, options: opt }: { queryFn: Fn, queryKey: QueryKey, options?: UseQueryOptions<Return<Fn, 'doc' | 'query'>> }) => {
@@ -18,4 +18,4 @@ const fireGet = <Fn extends QueryAdapter>({ queryFn, queryKey, options: opt }: {
 
 export const firebase = {
   get: fireGet,
-}
+} as Plugin
