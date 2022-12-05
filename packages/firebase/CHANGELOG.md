@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.11
+
+### Patch Changes
+
+- Fixes inferrered return type from Doc|Col|QueryReference<Type>
+
 ## 0.4.10
 
 ### Patch Changes
