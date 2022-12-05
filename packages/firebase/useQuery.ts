@@ -1,15 +1,17 @@
-import type { QueryKey } from '@tanstack/react-query'
+import type { QueryKey, UseQueryOptions } from '@tanstack/react-query'
 import { getRef } from './utils'
 import { useObserver } from './useObserver'
 import { useQuerySubscription } from './useQuerySubscription'
-import { ObserverType, QueryAdapter } from './types'
+import { ObserverType, QueryAdapter, Return } from './types'
 
 export function useQuery<FetchFn extends QueryAdapter>({
   queryKey,
   queryFn,
+  options,
 }: {
   queryKey: QueryKey
   queryFn: FetchFn
+  options?: UseQueryOptions<Return<FetchFn, 'query'>, Error>
 }) {
   const type: ObserverType = 'query'
   const ref = getRef<FetchFn, typeof type>(queryFn, queryKey)
@@ -20,5 +22,6 @@ export function useQuery<FetchFn extends QueryAdapter>({
     queryFn,
     type,
     subscribe,
+    options,
   })
 }
