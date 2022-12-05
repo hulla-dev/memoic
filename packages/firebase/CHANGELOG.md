@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.3
+
+### Patch Changes
+
+- Use passed options over default ones
+
 ## 0.4.2
 
 ### Patch Changes
