@@ -1,9 +1,9 @@
-import type { Plugin, Queries, QueryMap } from './types'
+import type { Plugin, QueryMap } from './types'
 import { get, prefetch } from './fetching'
 
-export function createMemoic<MemoicQueries extends QueryMap<Queries>>(
-  queries: MemoicQueries,
-  plugin?: Plugin,
+export function createMemoic<Queries extends QueryMap<Queries>, CustomPlugin extends Plugin>(
+  queries: Queries,
+  plugin?: CustomPlugin,
 ) {
   return {
     get: get(queries, plugin),
