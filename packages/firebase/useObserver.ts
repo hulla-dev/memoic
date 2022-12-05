@@ -1,5 +1,5 @@
 import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions, hashQueryKey } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
 type Observer = {
@@ -7,8 +7,6 @@ type Observer = {
   initState: number,
   refetchState: number
 }
-
-const subs: Record<string, Observer> = {}
 
 /**
  * Handles firebase API subscriptions, since react-query is based on Promises
@@ -28,8 +26,10 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   type: O,
   options?: UseQueryOptions<Return<Fn, O>, Error>
 }): UseQueryResult<Return<Fn, O>, Error> {
+  const ref = useRef<Record<string, Observer>>({})
+  const subs = ref.current
   const client = useQueryClient()
-  const hash = hashQueryKey(queryKey)
+  const hash = hashQueryKey(queryKey) as keyof typeof subs
 
   subs[hash].refetchState ??= 1
 
