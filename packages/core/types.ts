@@ -51,8 +51,8 @@ export type QueryAdapter = <Key extends QueryKey = QueryKey, Fn extends AsyncFn 
 
 export type Plugin<Adapter extends QueryAdapter = QueryAdapter> = {
   get?: Adapter
-  prefetch?: (...args: Parameters<QueryAdapter>) => Promise<void>
-  queryOptions?: UseQueryOptions & Record<string, unknown>
+  prefetch?: (...args: Parameters<Adapter>) => Promise<void>
+  queryOptions?: UseQueryOptions<Res<Adapter>, Error> 
   infiniteQueryOptions?: UseInfiniteQueryOptions & Record<string, unknown>
   preFetchOptions?: FetchQueryOptions & Record<string, unknown>
 }
