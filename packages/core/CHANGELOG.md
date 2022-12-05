@@ -1,5 +1,11 @@
 # memoic
 
+## 0.5.2
+
+### Patch Changes
+
+- Fixes query options type for plugins
+
 ## 0.5.1
 
 ### Patch Changes

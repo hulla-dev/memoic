@@ -1,5 +1,12 @@
 # next-example
 
+## 0.1.6
+
+### Patch Changes
+
+- Updated dependencies
+  - @memoic/core@0.5.2
+
 ## 0.1.5
 
 ### Patch Changes
