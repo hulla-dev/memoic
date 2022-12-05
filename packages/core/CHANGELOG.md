@@ -1,5 +1,11 @@
 # memoic
 
+## 0.5.0
+
+### Minor Changes
+
+- Fixes TS issues with deps and return, adds support for querying and collection on firebase
+
 ## 0.4.2
 
 ### Patch Changes
