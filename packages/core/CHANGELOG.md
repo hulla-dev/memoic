@@ -1,5 +1,11 @@
 # memoic
 
+## 0.5.1
+
+### Patch Changes
+
+- Adds support for default options, prefetch guard inferred from passed params
+
 ## 0.5.0
 
 ### Minor Changes
