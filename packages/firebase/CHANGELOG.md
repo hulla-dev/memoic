@@ -1,5 +1,13 @@
 # @memoic/firebase
 
+## 0.4.2
+
+### Patch Changes
+
+- Fixes query options type for plugins
+- Updated dependencies
+  - @memoic/core@0.5.2
+
 ## 0.4.1
 
 ### Patch Changes
