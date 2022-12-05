@@ -67,14 +67,18 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
     if (data !== undefined) {
       resolve(data)
     } else {
-      client.invalidateQueries(queryKey)
+      resolve(null)
     }
   } else {
     unsubscribe = subscribe(async (data: Return<Fn, O>) => {
       if (subs[hash].init) {
         client.setQueriesData(queryKey, data)
       } else {
-        resolve(data || null)
+        if (data !== undefined) {
+          resolve(data)
+        } else {
+          resolve(null)
+        }
         subs[hash].init = true
       }
     }, reject)
