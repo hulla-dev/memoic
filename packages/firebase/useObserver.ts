@@ -4,9 +4,10 @@ import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
 
 type Observer = {
   unsubscribe: Unsubscribe | undefined,
-  init?: boolean,
+  initState: number,
   refetchState: number
 }
+
 const subs: Record<string, Observer> = {}
 
 /**
@@ -52,7 +53,7 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   }, [])
 
   // instantiate fake promise for returning data
-  let resolve: (value?: Return<Fn, O>) => void = () => null
+  let resolve: (value?: Return<Fn, O> | null) => void = () => null
   let reject: (error: Error) => void = () => null
 
   const result = new Promise((res, err) => {
@@ -64,22 +65,15 @@ export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
   if (subs[hash].unsubscribe) {
     unsubscribe = subs[hash].unsubscribe
     const data = client.getQueryData<Return<Fn, O>>(queryKey)
-    if (data !== undefined) {
-      resolve(data)
-    } else {
-      resolve(null)
-    }
+    resolve(data || null)
   } else {
     unsubscribe = subscribe(async (data: Return<Fn, O>) => {
-      if (subs[hash].init) {
-        client.setQueriesData(queryKey, data)
+      subs[hash].initState ??= 0
+      subs[hash].initState += 1
+      if (subs[hash].initState === 1) {
+        resolve(data || null)
       } else {
-        if (data !== undefined) {
-          resolve(data)
-        } else {
-          resolve(null)
-        }
-        subs[hash].init = true
+        client.setQueryData(queryKey, data)
       }
     }, reject)
   }
