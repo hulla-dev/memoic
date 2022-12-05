@@ -7,6 +7,9 @@
     },
     "native": {
       "rootDir": ["packages/native"]
+    },
+    "firebase": {
+      "rootDir": ["packages/firebase"]
     }
   }
 }
