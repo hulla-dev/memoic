@@ -1,6 +1,6 @@
 import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions, hashQueryKey } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import type { Unsubscribe, QueryAdapter, Return, ObserverType } from './types'
+import type { Unsubscribe, Return, ObserverType, GetVariation } from './types'
 
 type Observer = {
   unsubscribe: Unsubscribe | undefined,
@@ -14,7 +14,7 @@ let obs: Record<string, Observer> = {}
  * Handles firebase API subscriptions, since react-query is based on Promises
  * however firebase is based on Observables, we need to bridge the gap.
  */
-export function useObserver<Fn extends QueryAdapter, O extends ObserverType>({
+export function useObserver<Fn extends GetVariation, O extends ObserverType>({
   queryKey,
   subscribe,
   options,
