@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.4.10
+
+### Patch Changes
+
+- Added observer manager
+
 ## 0.4.9
 
 ### Patch Changes
