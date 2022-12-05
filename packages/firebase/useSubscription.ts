@@ -8,18 +8,19 @@ import type { DocumentSnapshot } from 'firebase/firestore'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-export const useSubscription = <FetchFn extends QueryAdapter>(
-  ref: DocRef<Value<FetchFn>> | NativeDocRef<Value<FetchFn>>,
+export const useSubscription = <Fn extends QueryAdapter>(
+  ref: DocRef<Value<Fn>> | NativeDocRef<Value<Fn>>,
 ) =>
   useCallback(
     (
-      callback: (snap: Snapshot<Value<FetchFn>> | DocumentSnapshot<Value<FetchFn>>) => void,
+      callback: (data: Value<Fn> & { id: string }) => void,
       onError: (error: Error) => void,
     ): Unsubscribe => {
       if (isLegacyRef(ref)) {
         // @ts-ignore
         return ref.onSnapshot({
-          next: (snapshot: Snapshot<Value<FetchFn>>) => callback(snapshot),
+          next: (snapshot: Snapshot<Value<Fn>>) =>
+            callback({ id: snapshot.id, ...(snapshot.data() as Value<Fn>) }),
           error: onError,
         }) as Unsubscribe
       }
@@ -29,13 +30,14 @@ export const useSubscription = <FetchFn extends QueryAdapter>(
         // @ts-ignore
         const { onSnapshot } = require('firebase/firestore')
         return onSnapshot(
-          ref as DocRef<Value<FetchFn>>,
-          (snapshot: DocumentSnapshot<Value<FetchFn>>) => callback(snapshot),
+          ref as DocRef<Value<Fn>>,
+          (snapshot: DocumentSnapshot<Value<Fn>>) =>
+            callback({ id: snapshot.id, ...(snapshot.data() as Value<Fn>) }),
           onError,
         ) as Unsubscribe
       }
       throw Error(
-        'Missing onSnapshot method. Make sure your function returns DocumentReference or CollectionReference in v8 or you have v9 of firebase/firestore installed.',
+        'Missing onSnapshot method. Make sure your function returns DocumentReference or CollectionReference in v8 or you have >=v9 of firebase/firestore installed.',
       )
     },
     [ref],
