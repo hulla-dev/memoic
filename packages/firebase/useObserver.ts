@@ -1,10 +1,17 @@
-import { QueryKey, useQuery, useQueryClient, UseQueryResult, UseQueryOptions, hashQueryKey } from '@tanstack/react-query'
+import {
+  QueryKey,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+  UseQueryOptions,
+  hashQueryKey,
+} from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { Unsubscribe, Return, ObserverType, GetVariation } from './types'
 
 type Observer = {
-  unsubscribe: Unsubscribe | undefined,
-  initState: number,
+  unsubscribe: Unsubscribe | undefined
+  initState: number
   refetchState: number
 }
 
@@ -25,7 +32,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
     callback: (res: Return<Fn, O>) => void,
     onError: (error: Error) => void,
   ) => Unsubscribe
-  type: O,
+  type: O
   options?: UseQueryOptions<Return<Fn, O>, Error>
 }): UseQueryResult<Return<Fn, O>, Error> {
   const client = useQueryClient()
@@ -35,7 +42,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
     ...(obs || {}),
     [hash]: {
       ...(obs[hash] || {}),
-    }
+    },
   }
 
   obs[hash].refetchState ??= 1
