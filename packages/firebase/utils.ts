@@ -1,14 +1,18 @@
 import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import type { QueryKey } from '@tanstack/react-query'
-import type { CollectionReference, DocumentData, DocumentReference, Query } from 'firebase/firestore'
 import type {
-  ObserverType,
-  Value,
-} from './types'
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+  Query,
+} from 'firebase/firestore'
+import type { ObserverType, Value } from './types'
 
 type QueryVariation<T extends DocumentData> = CollectionReference<T> | Query<T>
 
-type NativeQueryVariation<T extends DocumentData> = FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.Query<T>
+type NativeQueryVariation<T extends DocumentData> =
+  | FirebaseFirestoreTypes.CollectionReference<T>
+  | FirebaseFirestoreTypes.Query<T>
 
 export function isDocument(
   ref:
