@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.5.1
+
+### Patch Changes
+
+- Adds auth subscription
+
 ## 0.5.0
 
 ### Minor Changes
