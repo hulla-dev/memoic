@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.5.0
+
+### Minor Changes
+
+- Adds conditional fetch on query type
+
 ## 0.4.11
 
 ### Patch Changes
