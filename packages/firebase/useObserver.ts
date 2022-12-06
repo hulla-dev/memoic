@@ -21,20 +21,17 @@ let obs: Record<string, Observer> = {}
  * Handles firebase API subscriptions, since react-query is based on Promises
  * however firebase is based on Observables, we need to bridge the gap.
  */
-export function useObserver<Fn extends GetVariation, O extends ObserverType>({
+export function useObserver<Fn extends GetVariation, O extends ObserverType, E = Error>({
   queryKey,
   subscribe,
   options,
 }: {
   queryKey: QueryKey
   queryFn: Fn
-  subscribe: (
-    callback: (res: Return<Fn, O>) => void,
-    onError: (error: Error) => void,
-  ) => Unsubscribe
+  subscribe: (callback: (res: Return<Fn, O>) => void, onError: (error: E) => void) => Unsubscribe
   type: O
-  options?: UseQueryOptions<Return<Fn, O>, Error>
-}): UseQueryResult<Return<Fn, O>, Error> {
+  options?: UseQueryOptions<Return<Fn, O>, E>
+}): UseQueryResult<Return<Fn, O>, E> {
   const client = useQueryClient()
   const hash = hashQueryKey(queryKey) as keyof typeof obs
 
@@ -44,8 +41,6 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
       ...(obs[hash] || {}),
     },
   }
-
-  obs[hash].refetchState ??= 1
 
   const cleanup = (hashId: keyof typeof obs) => {
     if (obs[hashId].refetchState === 1) {
@@ -59,6 +54,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
   }
 
   useEffect(() => {
+    obs[hash].refetchState ??= 1
     obs[hash].refetchState += 1
     return () => {
       obs[hash].refetchState -= 1
@@ -68,7 +64,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
 
   // instantiate fake promise for returning data
   let resolve: (value?: Return<Fn, O> | null) => void = () => null
-  let reject: (error: Error) => void = () => null
+  let reject: (error: E) => void = () => null
 
   const result = new Promise((res, err) => {
     resolve = res
@@ -93,7 +89,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType>({
   }
   obs[hash].unsubscribe = unsubscribe
 
-  return useQuery<Return<Fn, O>, Error>({
+  return useQuery<Return<Fn, O>, E>({
     ...(options || {}),
     queryFn: () => result as Promise<Return<Fn, O>>,
     queryKey,
