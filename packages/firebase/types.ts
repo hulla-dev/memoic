@@ -6,9 +6,9 @@ import type {
 } from 'firebase/firestore'
 import type { FirebaseFirestoreTypes } from '@react-native-firebase/firestore'
 import type { UseQueryOptions, QueryKey, UseQueryResult } from '@tanstack/react-query'
+import { User } from 'firebase/auth'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 export type Unsubscribe = () => void
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +18,12 @@ export type Final<Fn extends AnyFn> = ReturnType<Fn> extends Promise<infer T>
   ? Awaited<T>
   : ReturnType<Fn>
 
-export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends AnyFn = AnyFn>({
+export type QueryAdapter = <
+  Return,
+  Key extends QueryKey = QueryKey,
+  Fn extends AnyFn = AnyFn,
+  E = Error,
+>({
   queryKey,
   queryFn,
   params,
@@ -26,9 +31,9 @@ export type QueryAdapter = <Return, Key extends QueryKey = QueryKey, Fn extends 
   queryKey: Key
   queryFn: Fn
   params?: UseQueryOptions & Record<string, unknown>
-}) => UseQueryResult<Return, Error>
+}) => UseQueryResult<Return, E>
 
-export type ObserverType = 'doc' | 'query'
+export type ObserverType = 'doc' | 'query' | 'auth'
 
 export type Value<Fn> = Fn extends (...args: any[]) => infer R
   ? R extends DocumentReference<infer T>
@@ -66,4 +71,8 @@ export type GetVariation<T extends DocumentData = DocumentData> = (
 export type Res<Fn extends GetVariation> = Value<Fn> & { id: string }
 export type Return<Fn extends GetVariation, O extends ObserverType> = O extends 'doc'
   ? Res<Fn>
-  : Res<Fn>[]
+  : O extends 'query'
+  ? Res<Fn>[]
+  : O extends 'auth'
+  ? User | null
+  : never
