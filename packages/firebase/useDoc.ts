@@ -1,4 +1,4 @@
-import type { QueryKey, UseQueryOptions } from '@tanstack/react-query'
+import { QueryKey, UseQueryOptions } from '@tanstack/react-query'
 import type { ObserverType, Return, GetVariation } from './types'
 import { getRef } from './utils'
 import { useObserver } from './useObserver'
@@ -10,7 +10,7 @@ export function useDoc<FetchFn extends GetVariation>({
   options,
 }: {
   queryKey: QueryKey
-  queryFn: FetchFn,
+  queryFn: FetchFn
   options?: UseQueryOptions<Return<FetchFn, 'doc'>, Error>
 }) {
   const type: ObserverType = 'doc'
