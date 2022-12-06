@@ -12,7 +12,7 @@ import type { UseQueryOptions, QueryKey, UseQueryResult } from '@tanstack/react-
 export type Unsubscribe = () => void
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyFn = (...args: any[]) => Promise<any>
+export type AnyFn = (...args: any[]) => any
 
 export type Final<Fn extends AnyFn> = ReturnType<Fn> extends Promise<infer T>
   ? Awaited<T>
@@ -47,10 +47,23 @@ export type Value<Fn> = Fn extends (...args: any[]) => infer R
   : never
 
 export type QueryVariation<T extends DocumentData> = CollectionReference<T> | Query<T>
-export type NativeQueryVariation<T extends DocumentData> = FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.Query<T>
+export type NativeQueryVariation<T extends DocumentData> =
+  | FirebaseFirestoreTypes.CollectionReference<T>
+  | FirebaseFirestoreTypes.Query<T>
 
-export type GetReturnVariation<T extends DocumentData = DocumentData> = CollectionReference<T> | Query<T> | DocumentReference<T> | FirebaseFirestoreTypes.DocumentReference<T> | FirebaseFirestoreTypes.Query<T> | FirebaseFirestoreTypes.CollectionReference<T> | FirebaseFirestoreTypes.DocumentReference<T>
-export type GetVariation<T extends DocumentData = DocumentData> = (...args: any[]) => GetReturnVariation<T>
+export type GetReturnVariation<T extends DocumentData = DocumentData> =
+  | CollectionReference<T>
+  | Query<T>
+  | DocumentReference<T>
+  | FirebaseFirestoreTypes.DocumentReference<T>
+  | FirebaseFirestoreTypes.Query<T>
+  | FirebaseFirestoreTypes.CollectionReference<T>
+  | FirebaseFirestoreTypes.DocumentReference<T>
+export type GetVariation<T extends DocumentData = DocumentData> = (
+  ...args: any[]
+) => GetReturnVariation<T>
 
 export type Res<Fn extends GetVariation> = Value<Fn> & { id: string }
-export type Return<Fn extends GetVariation, O extends ObserverType> = O extends 'doc' ? Res<Fn> : Res<Fn>[]
+export type Return<Fn extends GetVariation, O extends ObserverType> = O extends 'doc'
+  ? Res<Fn>
+  : Res<Fn>[]
