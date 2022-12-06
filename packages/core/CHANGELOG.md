@@ -1,5 +1,11 @@
 # memoic
 
+## 0.5.3
+
+### Patch Changes
+
+- Adds support for overriding types
+
 ## 0.5.2
 
 ### Patch Changes
