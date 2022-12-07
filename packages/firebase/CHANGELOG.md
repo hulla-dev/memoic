@@ -1,5 +1,11 @@
 # @memoic/firebase
 
+## 0.5.4
+
+### Patch Changes
+
+- Bundles handler changes
+
 ## 0.5.3
 
 ### Patch Changes
