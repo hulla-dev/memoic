@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import type { Unsubscribe, Return, ObserverType, GetVariation } from './types'
+import { nonNullish } from './utils'
 
 type Observer = {
   unsubscribe: Unsubscribe | undefined
@@ -42,6 +43,8 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType, E =
     },
   }
 
+  obs[hash].refetchState = nonNullish(obs[hash]?.refetchState, 1)
+
   const cleanup = (hashId: keyof typeof obs) => {
     if (obs[hashId].refetchState === 1) {
       // needs to be a direct reference otherwise it can get lost in useEffect during unsubscription
@@ -54,7 +57,6 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType, E =
   }
 
   useEffect(() => {
-    obs[hash].refetchState ??= 1
     obs[hash].refetchState += 1
     return () => {
       obs[hash].refetchState -= 1
@@ -78,7 +80,7 @@ export function useObserver<Fn extends GetVariation, O extends ObserverType, E =
     resolve(data || null)
   } else {
     unsubscribe = subscribe(async (data: Return<Fn, O>) => {
-      obs[hash].initState ??= 0
+      obs[hash].initState = nonNullish(obs[hash]?.initState, 0)
       obs[hash].initState += 1
       if (obs[hash].initState === 1) {
         resolve(data || null)
